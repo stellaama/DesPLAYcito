@@ -4,22 +4,52 @@
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+  height: 50px;
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
+  background-color: #1DB954;
+  height: 125px;
   padding: 20px;
   color: white;
+  padding-bottom: 75px;
 }
 
 .App-title {
-  font-size: 1.5em;
+  font-size: 5em;
+  letter-spacing: 3px;
 }
 
 .App-intro {
   font-size: large;
+}
+
+.connect-section{
+  padding: 200px;
+  margin:0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-background{
+  background-color: #000000;
+  height: 100%;
+
+}
+#connect-spotify{
+  border-radius: 25px;
+    background: #1DB954;
+    padding: 5px;
+    width: 500px;
+    height: 40px;
+    color: white;
+    font-size: 12px;
+    letter-spacing: 7px;
+}
+
+#top-logo{
+  height: 60px;
 }
 
 @keyframes App-logo-spin {
