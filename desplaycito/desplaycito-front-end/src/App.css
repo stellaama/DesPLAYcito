@@ -26,6 +26,7 @@
 
 .connect-section{
   padding: 200px;
+  padding-top: 125px;
   margin:0 auto;
   display: flex;
   align-items: center;
@@ -79,6 +80,22 @@
   font-size: 20px;
 }
 
+#backbutton{
+  height: 50px;
+  margin-left: 40px;
+  margin-top: 35px;
+}
+
+.intro-text{
+  color:white;
+}
+
+.intro-align{
+  text-align: center;
+  margin-top: 100px;
+}
+
+img{border:0;}
 
 .spotify-button{
   border-radius: 25px;
@@ -90,6 +107,8 @@
   font-size: 12px;
   letter-spacing: 7px;
 }
+
+
 
 #top-logo{
   height: 60px;
