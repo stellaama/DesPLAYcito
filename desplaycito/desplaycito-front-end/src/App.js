@@ -7,15 +7,17 @@ import backbutton from './backbutton.png';
 
 import axios from 'axios';
 
+import SpotifyPlayer from 'react-spotify-player';
+
 function PlaylistButton(props){
   return (
     <div className= "playlistbuttons">
-        <button className = "groupbuttons" onClick={props.clickFunction}>
+        <button className = "groupbuttons" onClick={props.clickFunction1}>
           <h1 className= "playlisttitles">{props.title1}</h1>
           <p className="description">{props.description1}</p>
         </button>
         <div className="sidedivider"/>
-        <button className = "groupbuttons" onClick={props.clickFunction}>
+        <button className = "groupbuttons" onClick={props.clickFunction2}>
           <h1 className= "playlisttitles">{props.title2}</h1>
           <p className="description">{props.description2}</p>
         </button>
@@ -31,12 +33,15 @@ class App extends Component {
       loggedIn: false,
       playlistChosen: false,
       goBack: true,
+      playlistUrl: ""
     };
     this.componentDidMount = this.componentDidMount.bind(this);
     this.authorizeMySpotify = this.authorizeMySpotify.bind(this);
     this.checkLogIn = this.checkLogIn.bind(this);
     this.checkplaylistChosen = this.checkplaylistChosen.bind(this);
     this.goBackToDashboard = this.goBackToDashboard.bind(this);
+    this.getRelatedArtists = this.getRelatedArtists.bind(this);
+    this.getTopTracks = this.getTopTracks.bind(this);
   }
 
   componentDidMount(){
@@ -68,12 +73,50 @@ class App extends Component {
     }
   }
 
+  getRelatedArtists(){
+    this.setState({
+      playlistChosen: true,
+      goBack: false
+    });
+    if(this.state.user){
+      axios.post('/relatedArtistsTracks', {userId:this.state.user.id, playlistName:"DesPLAYcito"}).
+      then(res => {
+        this.setState({
+          uri: res.data.uri
+        });
+      })
+    }
+  }
+
+  getTopTracks(){
+    this.setState({
+      playlistChosen: true,
+      goBack: false
+    });
+    if(this.state.user){
+      axios.post('/topTracks', {userId:this.state.user.id, playlistName:"DesTOPcito"}).
+      then(res => {
+        this.setState({
+          uri: res.data.uri
+        });
+      })
+    }
+  }
+
   checkLogIn(){
     axios.get('/loggedIn')
     .then((res) => {
       this.setState({
         loggedIn: res.data.login
       });
+      if(res.data.login){
+        axios.get('/myInfo')
+        .then((res) => {
+          this.setState({
+            user: res.data
+          });
+        });
+      }
     });
   }
 
@@ -95,7 +138,10 @@ class App extends Component {
     </div>
 
     if (loggedIn && goBack){
-      var playlist = [["Top Artists", "Playlist of songs by your top artists"],["Top Tracks", "Playlist of your top tracks"], ["Related Artists","Playlist of songs by artists related to your top artists"],["Saved Tracks","Playlist of songs from your saved tracks"]]
+      var playlist = [["Top Artists", "Playlist of songs by your top artists", this.getRelatedArtists],
+      ["Top Tracks", "Playlist of your top tracks", this.getTopTracks],
+      ["Related Artists","Playlist of songs by artists related to your top artists", this.getRelatedArtists],
+      ["Saved Tracks","Playlist of songs from your saved tracks", this.getRelatedArtists]]
 
       buttonOption = [];
 
@@ -103,18 +149,29 @@ class App extends Component {
         buttonOption.push(<PlaylistButton
           title1={playlist[i][0]}
           description1={playlist[i][1]}
+          clickFunction1={playlist[i][2]}
           title2={playlist[i+1][0]}
           description2={playlist[i+1][1]}
-          clickFunction={this.checkplaylistChosen}
+          clickFunction2={playlist[i+1][2]}
         />);
     }
-
+    let playlistIframe = <div></div>
+    if (this.state.uri){
+      const size = {width: 400, height: 600};
+      const view = 'list'; // or 'coverart'
+      const theme = 'black'; // or 'white'
+      playlistIframe = <SpotifyPlayer
+        uri={this.state.uri}
+        size={size}
+        view={view}
+        theme={theme}
+      />
+    }
     if(playlistChosen){
       buttonOption =
       <div>
-      <img id="backbutton" src={backbutton} onClick={this.goBackToDashboard}/>
-        <div>
-        </div>
+        <img id="backbutton" src={backbutton} onClick={this.goBackToDashboard}/>
+      {playlistIframe}
       </div>
     }
 
