@@ -5,7 +5,7 @@ const axios = require('axios');
 
 
 var scopes = ['user-read-private', 'user-read-email', 'user-read-birthdate'],
-  redirectUri = 'http://localhost:3000/callback/',
+  redirectUri = 'http://localhost:4000/callback/',
   clientId = 'd37b9fe897af4d8590ab7fa2bef8e863',
   clientSecret = '63ef0b75f4b047bdb3f51fec7e3ac3eb',
   state = 'desplaycito-state';

@@ -37,7 +37,7 @@
   height: 100%;
 
 }
-#connect-spotify{
+.spotify-button{
   border-radius: 25px;
     background: #1DB954;
     padding: 5px;
