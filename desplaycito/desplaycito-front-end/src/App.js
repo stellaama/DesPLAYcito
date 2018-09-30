@@ -3,7 +3,25 @@ import logo from './logo.svg';
 import './App.css';
 import playbutton from './PlayButtonLogo.png';
 
+
 import axios from 'axios';
+
+function PlaylistButton(props){
+  return (
+    <div className= "playlistbuttons">
+        <button className = "groupbuttons" >
+          <h1 className= "playlisttitles">{props.title1}</h1>
+          <p className="description">{props.description1}</p>
+        </button>
+        <div className="sidedivider"/>
+        <button className = "groupbuttons" >
+          <h1 className= "playlisttitles">{props.title2}</h1>
+          <p className="description">{props.description2}</p>
+        </button>
+    </div>
+  )
+}
+
 
 class App extends Component {
 
@@ -52,14 +70,14 @@ class App extends Component {
     </div>
 
     if (loggedIn){
-      buttonOption =
-      <div>
-      <div><button>PlayList #1</button></div>
-      <div><button>PlayList #2</button></div>
-      <div><button>PlayList #3</button></div>
-      <div><button>PlayList #4</button></div>
-      </div>
+      var playlist = [["Top Artists", "Playlist of songs by your top artists"],["Top Tracks", "Playlist of your top tracks"], ["Related Artists","Playlist of songs by artists related to your top artists"],["Saved Tracks","Playlist of songs from your saved tracks"]]
+
+      buttonOption = [];
+
+      for (let i=0; i < 3; i += 2)
+        buttonOption.push(<PlaylistButton title1={playlist[i][0]} description1={playlist[i][1]} title2={playlist[i+1][0]} description2={playlist[i+1][1]}/>);
     }
+
 
     return (
       <div className ="color-background">

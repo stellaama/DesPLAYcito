@@ -37,15 +37,61 @@
   height: 100%;
 
 }
+<<<<<<< HEAD
+
+=======
+
+.sidedivider{
+    width:50px;
+    height:auto;
+    display:inline-block;
+}
+
+.bottomdivider{
+    width:auto;
+    height:10px;
+    display:inline-block;
+}
+
+.playlistbuttons{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 35px;
+}
+
+.playlisttitles{
+  color: #15863D;
+  vertical-align: top;
+  padding-bottom: 10px;
+  font-size: 30px;
+  text-decoration: underline;
+}
+
+.groupbuttons{
+  border-radius: 25px;
+  background: #E0E0E0;
+  padding: 5px;
+  width: 275px;
+  height: 225px;
+  color: black;
+  font-size: 12px;
+}
+
+.description{
+  font-size: 20px;
+}
+
+
 .spotify-button{
   border-radius: 25px;
-    background: #1DB954;
-    padding: 5px;
-    width: 500px;
-    height: 40px;
-    color: white;
-    font-size: 12px;
-    letter-spacing: 7px;
+  background: #1DB954;
+  padding: 5px;
+  width: 500px;
+  height: 40px;
+  color: white;
+  font-size: 12px;
+  letter-spacing: 7px;
 }
 
 #top-logo{
