@@ -4,7 +4,8 @@ var router = express.Router();
 const axios = require('axios');
 
 
-var scopes = ['user-read-private', 'user-read-email', 'user-read-birthdate'],
+var scopes = ['user-read-private', 'user-read-email', 'user-read-birthdate', 'user-top-read', 'user-library-read',
+'playlist-modify-private', 'playlist-read-private', 'playlist-modify-public','user-read-recently-played'],
   redirectUri = 'http://localhost:4000/callback/',
   clientId = 'd37b9fe897af4d8590ab7fa2bef8e863',
   clientSecret = '63ef0b75f4b047bdb3f51fec7e3ac3eb',
@@ -53,7 +54,6 @@ router.get('/callback', function(req, res, next) {
 router.get('/myInfo', function(req, res, next) {
   spotifyApi.getMe()
   .then(function(data) {
-    console.log('Some information about the authenticated user', data.body);
     res.json(data.body);
   }, function(err) {
     res.json({error: err});
@@ -69,4 +69,105 @@ router.get('/loggedIn', function(req, res, next) {
   });
 });
 
+router.post('/relatedArtistsTracks', function(req, res, next) {
+  var userId = req.body.userId;
+  var playlistName = req.body.playlistName;
+  spotifyApi.createPlaylist(userId, playlistName)
+  .then(function(data) {
+    let playlistId = data.body.id;
+    console.log("playlist completed");
+    spotifyApi.getMyTopArtists({limit:5})
+    .then(function(data) {
+      let topArtistIds = data.body.items.map(function(artist){
+        return artist.id;
+      });
+      console.log("top artists completed");
+      spotifyApi.getRecommendations({seed_artists: topArtistIds, limit: 10})
+      .then(function(data) {
+        let topTracksIds = data.body.tracks.map(function(track){
+          return track.uri;
+        });
+        console.log(topTracksIds);
+        spotifyApi.addTracksToPlaylist(playlistId, topTracksIds)
+        .then(function(data) {
+          res.json(data.body);
+        }, function(err) {
+
+          res.json({error: err});
+        });
+      }, function(err) {
+        res.json({error: err});
+      });
+    }, function(err) {
+      res.json({error: err});
+    });
+  }, function(err) {
+    res.json({error: err});
+  });
+});
+
+router.post('/topTracks', function(req, res, next) {
+  var userId = req.body.userId;
+  var playlistName = req.body.playlistName;
+  spotifyApi.createPlaylist(userId, playlistName)
+  .then(function(data) {
+    let playlistId = data.body.id;
+    console.log("playlist completed");
+    spotifyApi.getMyTopTracks({limit:10, time_range:"long_term"})
+    .then(function(data) {
+      let topTracksIds = data.body.items.map(function(track){
+        return track.uri;
+      });
+      console.log(topTracksIds);
+      spotifyApi.addTracksToPlaylist(playlistId, topTracksIds)
+      .then(function(data) {
+        res.json(data.body);
+      }, function(err) {
+        res.json({error: err});
+      });
+    }, function(err) {
+    res.json({error: err});
+  });
+}, function(err) {
+res.json({error: err});
+});
+});
+
+/*
+router.post('/topArtistsTracks', function(req, res, next) {
+  var userId = req.body.userId;
+  var playlistName = req.body.playlistName;
+  spotifyApi.createPlaylist(userId, playlistName)
+  .then(function(data) {
+    let playlistId = data.body.id;
+    console.log("playlist completed");
+    spotifyApi.getMyTopArtists({limit:10})
+    .then(function(data){
+      let topArtistIds = data.body.items.map(function(artist){
+        return artist.id;
+      });
+      let topTracksIds = topArtistIds.map(async function(artistId){
+        await spotifyApi.getArtistTopTracks(artistId,'US')
+        .then(function(data) {
+          return data.body.tracks[0].uri;
+        }, function(err) {
+          return "";
+        });
+      });
+        console.log(topTracksIds);
+        spotifyApi.addTracksToPlaylist(playlistId, topTracksIds)
+        .then(function(data) {
+          res.json(data.body);
+        }, function(err) {
+          res.json({error: err});
+        });
+      });
+    }, function(err) {
+      res.json({error: err});
+    });
+  }, function(err) {
+    res.json({error: err});
+  });
+});
+*/
 module.exports = router;
