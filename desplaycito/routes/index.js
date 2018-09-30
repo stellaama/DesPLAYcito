@@ -113,7 +113,6 @@ router.post('/topTracks', function(req, res, next) {
   spotifyApi.createPlaylist(userId, playlistName)
   .then(function(data) {
     let playlistId = data.body.id;
-    let plasylistUri = data.body.uri;
     console.log("playlist completed");
     spotifyApi.getMyTopTracks({limit:10, time_range:"long_term"})
     .then(function(data) {
@@ -123,7 +122,7 @@ router.post('/topTracks', function(req, res, next) {
       console.log(topTracksIds);
       spotifyApi.addTracksToPlaylist(playlistId, topTracksIds)
       .then(function(data) {
-        res.json({uri: plasylistUri});
+        res.json(data.body);
       }, function(err) {
         res.json({error: err});
       });
@@ -135,7 +134,7 @@ res.json({error: err});
 });
 });
 
-/*
+
 router.post('/topArtistsTracks', function(req, res, next) {
   var userId = req.body.userId;
   var playlistName = req.body.playlistName;
@@ -148,15 +147,15 @@ router.post('/topArtistsTracks', function(req, res, next) {
       let topArtistIds = data.body.items.map(function(artist){
         return artist.id;
       });
-      let topTracksIds = topArtistIds.map(async function(artistId){
-        await spotifyApi.getArtistTopTracks(artistId,'US')
+      let topTracksIds = topArtistIds.map(function(artistId){
+        return spotifyApi.getArtistTopTracks(artistId,'US')
         .then(function(data) {
           return data.body.tracks[0].uri;
         }, function(err) {
           return "";
         });
       });
-        console.log(topTracksIds);
+      Promise.all(topTracksIds).then(function(topTracksIds){
         spotifyApi.addTracksToPlaylist(playlistId, topTracksIds)
         .then(function(data) {
           res.json(data.body);
@@ -171,5 +170,43 @@ router.post('/topArtistsTracks', function(req, res, next) {
     res.json({error: err});
   });
 });
-*/
+
+router.post('/relatedTopTracks', function(req, res, next) {
+  var userId = req.body.userId;
+  var playlistName = req.body.playlistName;
+  spotifyApi.createPlaylist(userId, playlistName)
+  .then(function(data) {
+    let playlistId = data.body.id;
+    let plasylistUri = data.body.uri;
+    console.log("playlist completed");
+    spotifyApi.getMyTopTracks({limit:5})
+    .then(function(data) {
+      let topTracksIds = data.body.items.map(function(track){
+        return track.id;
+      });
+      console.log("top artists completed");
+      spotifyApi.getRecommendations({seed_tracks: topTracksIds, limit: 10})
+      .then(function(data) {
+        let topRecIds = data.body.tracks.map(function(track){
+          return track.uri;
+        });
+        console.log(topRecIds);
+        spotifyApi.addTracksToPlaylist(playlistId, topRecIds)
+        .then(function(data) {
+          res.json({uri: plasylistUri});
+        }, function(err) {
+
+          res.json({error: err});
+        });
+      }, function(err) {
+        res.json({error: err});
+      });
+    }, function(err) {
+      res.json({error: err});
+    });
+  }, function(err) {
+    res.json({error: err});
+  });
+});
+
 module.exports = router;

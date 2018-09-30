@@ -141,7 +141,7 @@ class App extends Component {
       var playlist = [["Top Artists", "Playlist of songs by your top artists", this.getRelatedArtists],
       ["Top Tracks", "Playlist of your top tracks", this.getTopTracks],
       ["Related Artists","Playlist of songs by artists related to your top artists", this.getRelatedArtists],
-      ["Saved Tracks","Playlist of songs from your saved tracks", this.getRelatedArtists]]
+      ["Related Tracks","Playlist of songs related to your top tracks", this.getRelatedArtists]]
 
       buttonOption = [];
 
