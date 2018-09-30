@@ -6,8 +6,8 @@ import backbutton from './backbutton.png';
 
 
 import axios from 'axios';
-
 import SpotifyPlayer from 'react-spotify-player';
+var moment = require('moment');
 
 function PlaylistButton(props){
   return (
@@ -42,6 +42,8 @@ class App extends Component {
     this.goBackToDashboard = this.goBackToDashboard.bind(this);
     this.getRelatedArtists = this.getRelatedArtists.bind(this);
     this.getTopTracks = this.getTopTracks.bind(this);
+    this.getRelatedTracks = this.getRelatedTracks.bind(this);
+    this.getTopArtists = this.getTopArtists.bind(this);
   }
 
   componentDidMount(){
@@ -63,7 +65,8 @@ class App extends Component {
   goBackToDashboard(){
     this.setState({
       playlistChosen: false,
-      goBack: true
+      goBack: true,
+      uri: ""
     })
   }
 
@@ -79,8 +82,11 @@ class App extends Component {
       goBack: false
     });
     if(this.state.user){
-      axios.post('/relatedArtistsTracks', {userId:this.state.user.id, playlistName:"DesPLAYcito"}).
-      then(res => {
+      var timeNow = moment().format("MM/DD/YY [at] hh:mma");
+      axios.post('/relatedArtistsTracks',
+      {userId:this.state.user.id,
+        playlistName:this.state.user.display_name + "'s Top Artist Recommendations - " + timeNow
+      }).then(res => {
         this.setState({
           uri: res.data.uri
         });
@@ -94,8 +100,47 @@ class App extends Component {
       goBack: false
     });
     if(this.state.user){
-      axios.post('/topTracks', {userId:this.state.user.id, playlistName:"DesTOPcito"}).
-      then(res => {
+      var timeNow = moment().format("MM/DD/YY [at] hh:mma");
+      axios.post('/topTracks',
+      {userId:this.state.user.id,
+        playlistName:this.state.user.display_name + "'s Top Tracks - " + timeNow
+      }).then(res => {
+        this.setState({
+          uri: res.data.uri
+        });
+      })
+    }
+  }
+
+  getRelatedTracks(){
+    this.setState({
+      playlistChosen: true,
+      goBack: false
+    });
+    if(this.state.user){
+      var timeNow = moment().format("MM/DD/YY [at] hh:mma");
+      axios.post('/relatedTopTracks',
+      {userId:this.state.user.id,
+        playlistName:this.state.user.display_name + "'s Top Tracks Recommendations - " + timeNow
+      }).then(res => {
+        this.setState({
+          uri: res.data.uri
+        });
+      })
+    }
+  }
+
+  getTopArtists(){
+    this.setState({
+      playlistChosen: true,
+      goBack: false
+    });
+    if(this.state.user){
+      var timeNow = moment().format("MM/DD/YY [at] hh:mma");
+      axios.post('/topArtistsTracks',
+      {userId:this.state.user.id,
+        playlistName:this.state.user.display_name + "'s Top Artist Tracks - " + timeNow
+      }).then(res => {
         this.setState({
           uri: res.data.uri
         });
@@ -137,11 +182,15 @@ class App extends Component {
       </div>
     </div>
 
+    let userGreeting = <div></div>;
     if (loggedIn && goBack){
-      var playlist = [["Top Artists", "Playlist of songs by your top artists", this.getRelatedArtists],
+      if (this.state.user){
+        userGreeting = <h2 className="intro-text">Hey {this.state.user.display_name}! Click a button to make a customized playlist, just for you!</h2>
+      }
+      var playlist = [["Top Artists", "Playlist of songs by your top artists", this.getTopArtists],
       ["Top Tracks", "Playlist of your top tracks", this.getTopTracks],
       ["Related Artists","Playlist of songs by artists related to your top artists", this.getRelatedArtists],
-      ["Related Tracks","Playlist of songs related to your top tracks", this.getRelatedArtists]]
+      ["Related Tracks","Playlist of songs related to your top tracks", this.getRelatedTracks]]
 
       buttonOption = [];
 
@@ -182,6 +231,7 @@ class App extends Component {
             <h1 className="App-title">Des<img id="top-logo" src={playbutton}/>cito</h1>
           </header>
         </div>
+        {userGreeting}
         {buttonOption}
       </div>
     );

@@ -113,6 +113,7 @@ router.post('/topTracks', function(req, res, next) {
   spotifyApi.createPlaylist(userId, playlistName)
   .then(function(data) {
     let playlistId = data.body.id;
+    let plasylistUri = data.body.uri;
     console.log("playlist completed");
     spotifyApi.getMyTopTracks({limit:10, time_range:"long_term"})
     .then(function(data) {
@@ -122,7 +123,7 @@ router.post('/topTracks', function(req, res, next) {
       console.log(topTracksIds);
       spotifyApi.addTracksToPlaylist(playlistId, topTracksIds)
       .then(function(data) {
-        res.json(data.body);
+        res.json({uri: plasylistUri});
       }, function(err) {
         res.json({error: err});
       });
@@ -141,6 +142,7 @@ router.post('/topArtistsTracks', function(req, res, next) {
   spotifyApi.createPlaylist(userId, playlistName)
   .then(function(data) {
     let playlistId = data.body.id;
+    let plasylistUri = data.body.uri;
     console.log("playlist completed");
     spotifyApi.getMyTopArtists({limit:10})
     .then(function(data){
@@ -158,7 +160,7 @@ router.post('/topArtistsTracks', function(req, res, next) {
       Promise.all(topTracksIds).then(function(topTracksIds){
         spotifyApi.addTracksToPlaylist(playlistId, topTracksIds)
         .then(function(data) {
-          res.json(data.body);
+          res.json({uri: plasylistUri});
         }, function(err) {
           res.json({error: err});
         });
