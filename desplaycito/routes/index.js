@@ -23,6 +23,17 @@ router.get('/get-login-url', function(req, res, next) {
   res.json({url: authorizeURL});
 });
 
+router.get('/logout', function(req, res, next) {
+  spotifyApi.setAccessToken(null);
+  spotifyApi.setRefreshToken(null);
+  spotifyApi.getMe()
+  .then(function(data) {
+    res.json({login: true});
+  }, function(err) {
+    res.json({login: false});
+  });
+});
+
 router.get('/callback', function(req, res, next) {
   var code = req.query.code;
   /*
@@ -93,7 +104,6 @@ router.post('/relatedArtistsTracks', function(req, res, next) {
         .then(function(data) {
           res.json({uri: plasylistUri});
         }, function(err) {
-
           res.json({error: err});
         });
       }, function(err) {
@@ -197,7 +207,6 @@ router.post('/relatedTopTracks', function(req, res, next) {
         .then(function(data) {
           res.json({uri: plasylistUri});
         }, function(err) {
-
           res.json({error: err});
         });
       }, function(err) {

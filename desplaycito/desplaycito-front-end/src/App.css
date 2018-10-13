@@ -1,27 +1,37 @@
-.App {
-  text-align: center;
-}
-
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 50px;
 }
 
-.App-header {
+.App{
+  height: 30vh;
   background-color: #1DB954;
-  height: 125px;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   color: white;
-  padding-bottom: 75px;
+}
+
+.App-container{
+  height: 70vh;
 }
 
 .App-title {
   font-size: 5em;
   letter-spacing: 3px;
+  margin: 0 auto;
 }
 
 .App-intro {
   font-size: large;
+}
+
+.app-container{
+  display: flex;
+}
+
+.intro-text{
+text-align: center;
 }
 
 .connect-section{
@@ -32,6 +42,8 @@
   align-items: center;
   justify-content: center;
 }
+
+
 
 .color-background{
   background-color: #000000;
@@ -51,11 +63,19 @@
     display:inline-block;
 }
 
+.playlist-section{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
 .playlistbuttons{
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 35px;
+  padding-bottom: 3vh;
 }
 
 .playlisttitles{
@@ -70,8 +90,8 @@
   border-radius: 25px;
   background: #E0E0E0;
   padding: 5px;
-  width: 275px;
-  height: 225px;
+  width: 30vw;
+  height: 23vh;
   color: black;
   font-size: 12px;
 }

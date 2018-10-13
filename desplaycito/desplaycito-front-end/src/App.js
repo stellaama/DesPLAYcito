@@ -44,6 +44,7 @@ class App extends Component {
     this.getTopTracks = this.getTopTracks.bind(this);
     this.getRelatedTracks = this.getRelatedTracks.bind(this);
     this.getTopArtists = this.getTopArtists.bind(this);
+    this.logOut = this.logOut.bind(this);
   }
 
   componentDidMount(){
@@ -53,6 +54,7 @@ class App extends Component {
         logInUrl: res.data.url
       });
     })
+    this.checkLogIn();
   }
 
   checkplaylistChosen(){
@@ -165,12 +167,30 @@ class App extends Component {
     });
   }
 
+  logOut(){
+    axios.get('/logout')
+    .then((res) => {
+      this.setState({
+        loggedIn: res.data.login
+      });
+      if(!res.data.login){
+        axios.get('/get-login-url')
+        .then((res) => {
+          this.setState({
+            logInUrl: res.data.url,
+            user: null
+          });
+        });
+      }
+    });
+  }
+
   render() {
     let loggedIn = this.state.loggedIn;
     let goBack = this.state.goBack;
     let playlistChosen = this.state.playlistChosen;
 
-    let buttonOption =
+    let body =
     <div>
       <div className="intro-align">
         <h3 className="intro-text">DesPLAYcito is your personal playlist generator. Connect it with your Spotify to see playlists curated to your tastes!</h3>
@@ -183,6 +203,7 @@ class App extends Component {
     </div>
 
     let userGreeting = <div></div>;
+    let logoutButton = <div></div>;
     if (loggedIn && goBack){
       if (this.state.user){
         userGreeting = <h2 className="intro-text">Hey {this.state.user.display_name}! Click a button to make a customized playlist, just for you!</h2>
@@ -192,10 +213,10 @@ class App extends Component {
       ["Related Artists","Playlist of songs by artists related to your top artists", this.getRelatedArtists],
       ["Related Tracks","Playlist of songs related to your top tracks", this.getRelatedTracks]]
 
-      buttonOption = [];
+      let bodyButtons = [];
 
       for (let i=0; i < 3; i += 2)
-        buttonOption.push(<PlaylistButton
+        bodyButtons.push(<PlaylistButton
           title1={playlist[i][0]}
           description1={playlist[i][1]}
           clickFunction1={playlist[i][2]}
@@ -203,8 +224,14 @@ class App extends Component {
           description2={playlist[i+1][1]}
           clickFunction2={playlist[i+1][2]}
         />);
+      logoutButton = <button className="spotify-button" onClick={this.logOut}> <b>LOG OUT</b></button>;
+      body = (<div className= "playlist-section">
+      {bodyButtons}
+      {logoutButton}
+      </div>
+      );
     }
-    let playlistIframe = <div></div>
+    let playlistIframe = <div></div>;
     if (this.state.uri){
       const size = {width: 400, height: 600};
       const view = 'list'; // or 'coverart'
@@ -217,7 +244,7 @@ class App extends Component {
       />
     }
     if(playlistChosen){
-      buttonOption =
+      body =
       <div>
         <img id="backbutton" src={backbutton} onClick={this.goBackToDashboard}/>
       {playlistIframe}
@@ -227,12 +254,10 @@ class App extends Component {
     return (
       <div className ="color-background">
         <div className="App">
-          <header className="App-header">
             <h1 className="App-title">Des<img id="top-logo" src={playbutton}/>cito</h1>
-          </header>
         </div>
         {userGreeting}
-        {buttonOption}
+        {body}
       </div>
     );
   }
